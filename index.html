@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTech Solar Portal | Welcome</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at top right, #e0f2fe, #f1f5f9);
+        }
+
+        /* Dynamic Background Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: 0;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            /* Yellow */
+            top: -100px;
+            right: -100px;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            /* Blue */
+            bottom: -50px;
+            left: -50px;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(-30px, 50px) scale(1.1);
+            }
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 3rem 2.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo-area {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .company-logo {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            margin-bottom: 1rem;
+            box-shadow: 0 0 10px var(--primary-glow);
+            animation: pulse-glow 3s infinite;
+            background-color: #ffffff;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px rgba(30, 58, 138, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 0 25px rgba(30, 58, 138, 0.4);
+            }
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .forgot-password {
+            font-size: 0.85rem;
+            color: var(--primary);
+            float: right;
+            margin-top: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-page">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+
+        <div class="login-container glass-panel">
+            <div class="logo-area">
+                <img class="company-logo" src="assets/images/logo.jpeg" alt="BTech Solar Logo"
+                    onerror="this.src='https://ui-avatars.com/api/?name=BTech+Solar&background=f59e0b&color=fff&rounded=true&size=110'">
+                <h1 class="logo-text">BTech <span>Solar</span> Solutions</h1>
+                <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">Enterprise Portal</p>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label" style="color: var(--primary);">Email / Username</label>
+                    <div style="position: relative;">
+                        <i class="fa-solid fa-user"
+                            style="position: absolute; left: 1rem; top: 1rem; color: var(--text-muted);"></i>
+                        <input type="text" id="email" class="form-control" placeholder="Enter your email"
+                            style="padding-left: 2.5rem;" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="color: var(--primary);">Password</label>
+                    <div style="position: relative;">
+                        <i class="fa-solid fa-lock"
+                            style="position: absolute; left: 1rem; top: 1rem; color: var(--text-muted);"></i>
+                        <input type="password" id="password" class="form-control" placeholder="Enter password"
+                            style="padding-left: 2.5rem; padding-right: 2.5rem;" required>
+                        <i class="fa-solid fa-eye" id="togglePassword"
+                            style="position: absolute; right: 1rem; top: 1rem; color: var(--text-muted); cursor: pointer; z-index: 10;"></i>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                    <div style="clear: both;"></div>
+                </div>
+
+                <div id="errorMsg"
+                    style="color: #ef4444; font-size: 0.9rem; margin-top: 1rem; text-align: center; display: none;">
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full"
+                    style="margin-top: 1.5rem; padding: 1rem; font-size: 1.1rem;">
+                    Sign In <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.querySelector('button[type="submit"]');
+            btn.innerHTML = 'Signing in...';
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.style.display = 'none';
+
+            // Predefined accounts for instant/offline login
+            const localUsers = {
+                'admin': { role: 'ADMIN', email: 'admin@btech.com', passwords: ['admi123', 'admin123'] },
+                'admin@btech.com': { role: 'ADMIN', email: 'admin@btech.com', passwords: ['admi123', 'admin123'] },
+                'employee': { role: 'EMPLOYEE', email: 'employee@btech.com', passwords: ['emp123'] },
+                'employee@btech.com': { role: 'EMPLOYEE', email: 'employee@btech.com', passwords: ['emp123'] }
+            };
+
+            // 1. Direct local login check
+            if (localUsers[email] && localUsers[email].passwords.includes(password)) {
+                localStorage.setItem('userRole', localUsers[email].role);
+                localStorage.setItem('userEmail', localUsers[email].email);
+                setTimeout(() => {
+                    window.location.href = 'pages/dashboard.html';
+                }, 400);
+                return;
+            }
+
+            // 2. Otherwise, attempt backend API login
+            try {
+                const res = await fetch('http://localhost:8080/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('userRole', data.role);
+                    localStorage.setItem('userEmail', data.email);
+                    setTimeout(() => {
+                        window.location.href = 'pages/dashboard.html';
+                    }, 400);
+                } else {
+                    errorMsg.style.display = 'block';
+                    errorMsg.innerText = 'Log in Failed: Invalid email or password!';
+                    btn.innerHTML = 'Sign In <i class="fa-solid fa-arrow-right"></i>';
+                }
+            } catch (error) {
+                errorMsg.style.display = 'block';
+                errorMsg.innerText = 'Log in Failed: Invalid email or password!';
+                btn.innerHTML = 'Sign In <i class="fa-solid fa-arrow-right"></i>';
+            }
+        }
+
+        // Toggle Password Visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
+</body>
+
+</html>
